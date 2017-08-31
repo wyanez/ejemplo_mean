@@ -1,28 +1,53 @@
 "use strict";
 
-exports.index = function (req, res) {
-  res.json({message : 'Hello World!'})
+var mongoose = require('mongoose'), 
+    Message = mongoose.model('Message');
+
+exports.hello_all = function (req, res) {
+    Message.find({}, function(err, messages) {
+        if (err) res.json(err);
+        res.json({messages});
+     });
 }
 
 exports.hello_get = function (req, res) {
-      var msg = get_message(req,'GET')
-      res.json({ message: msg })
+    Message.findById(req.params.messageId, function(err, msg) {
+        if (err) res.send(err);
+        res.json(msg);
+    });
 }
 
-exports.hello_post = function (req, res) {
+exports.hello_create = function (req, res) {
     console.log("Recibiendo peticion POST /hello")
-    var msg = get_message(req,'POST')
-    res.json({ message: msg })
+    
+    var new_message = new Message(req.body);
+    new_message.save(function(err, message) {
+        if (err) res.send(err);
+        res.json(message);
+    });
 }
 
-exports.hello_put =  function (req, res) {
+exports.hello_update =  function (req, res) {
     console.log("Recibiendo peticion PUT /hello")
-    var msg = get_message(req,'PUT')
-    res.json({ message: msg })
+    Message.findOneAndUpdate({_id: req.params.messageId}, req.body, {new: true}, 
+        function(err, msg) {
+            if (err) res.json(err);
+            res.json(msg);
+        });
+}
+
+exports.hello_delete =  function (req, res) {
+    console.log("Recibiendo peticion DELETE /hello")
+    Message.remove({
+        _id: req.params.messageId
+      }, function(err, task) {
+        if (err) res.json(err);
+        res.json({ message: 'Message successfully deleted' });
+      });
 }
 
 exports.about = function (req, res) {
-    res.json({ message: 'About: Hello World!'})
+    res.json({ message: 'About: Hello World MEAN Example App!'})
 }
 
 function get_message(request,method){
