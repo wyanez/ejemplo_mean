@@ -1,7 +1,7 @@
 'use strict';
 module.exports = function(app) {
 
-    var hello = require('./hola_controller.js')
+    var hello = require('../controllers/hola_controller.js')
 
     app.route('/hello')
     .get(hello.hello_all)
