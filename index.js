@@ -12,34 +12,33 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+var hello = require('./hola_controller.js')
+
 app.get('/', function (req, res) {
-  res.send('Hello World!');
+  res.json({message : 'Hello World!'})
 });
 
 app.get('/hello', function (req, res) {
-  var name = getName(req);
-  res.send('GET: Hello World '+ name + ' !' );
+  var msg = hello.get_message(req,'GET')
+  res.json({ message: msg })
 });
 
 app.post('/hello', function (req, res) {
-  console.log("Recibiendo peticion POST /hello")
-
-  var name = getName(req);
-  res.send('POST: Hello World '+ name + ' !' );
-  
+    console.log("Recibiendo peticion POST /hello")
+    var msg = hello.get_message(req,'POST')
+    res.json({ message: msg })
 });
 
 
 app.put('/hello', function (req, res) {
-  console.log("Recibiendo peticion PUT /hello")
-
-  var name = getName(req);
-  res.json({ message: 'Hello World '+ name + ' !' });     
+    console.log("Recibiendo peticion PUT /hello")
+    var msg = hello.get_message(req,'PUT')
+    res.json({ message: msg })
 });
 
 
 app.get('/about', function (req, res) {
-  res.send('About: Hello World!');
+    res.json({ message: 'About: Hello World!'})
 });
 
 
@@ -47,15 +46,3 @@ app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 });
 
-
-function getName(req) {
-    var name = "" 
-    if (req.method == 'POST' || req.method == 'PUT'){
-        if (req.body.name !== undefined) name = req.body.name
-    }
-    else{
-        if ( req.query.name !== undefined) name = req.query.name         
-    }
-
-    return name;
-}
